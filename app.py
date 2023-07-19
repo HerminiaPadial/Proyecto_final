@@ -1,7 +1,13 @@
-#imports
+import streamlit as st
 import json
 import pandas as pd
 import numpy as np
+import streamlit as st
+
+st.image('/Users/herminiapadialromera/ironhackb/Proyecto_final/Images/logo.png', use_column_width='always')
+
+st.title(":blue[Sistema de recomendación de cursos]")
+
 
 #funciones
 def lectura_input(path): 
@@ -175,18 +181,31 @@ def objetivo_analisis(lectura):
         return filtro_edcrecim_tematica(df_sr4, 5)
 if __name__ == '__main__':
 
-    sr = input("Seleccione Sistema de Recomendación (1, 2, 3 o 4): ")
+    #sr = input("Seleccione Sistema de Recomendación (1, 2, 3 o 4): ")
+    objetivo = st.radio('**:red[Nuestra recomendación siempre parte del objetivo seleccionado por cliente]:**', ('Ofrecer formación variada', 'Aumentar la participación de las familias', 'Sorprender con contenidos innovadores y formatos novedosos', 'Solucionar problemas de comunicacion y actitud de niños y familias'))
 
-    if sr == "1":
-        path_de_lectura='/Users/herminiapadialromera/ironhackb/Proyecto_final/notebooks/input_.json'
-    elif sr == "2":
-        path_de_lectura='/Users/herminiapadialromera/ironhackb/Proyecto_final/notebooks/input_sist_recom_2.json'
-    elif sr == "3":
-        path_de_lectura='/Users/herminiapadialromera/ironhackb/Proyecto_final/notebooks/input_sist_recom_3.json'
+    if objetivo == 'Ofrecer formación variada':
+        path_de_lectura = '/Users/herminiapadialromera/ironhackb/Proyecto_final/notebooks/input_.json'
+        lectura = lectura_datos(path=path_de_lectura)
+        resultado = filtro_tematica_etapa_formato(lectura, 5)
+    elif objetivo == 'Aumentar la participación de las familias':
+        path_de_lectura = '/Users/herminiapadialromera/ironhackb/Proyecto_final/notebooks/input_sist_recom_2.json'
+        lectura = lectura_datos(path=path_de_lectura)
+        resultado = filtro_valoracion_tematica(lectura, 5)
+    elif objetivo == 'Sorprender con contenidos innovadores y formatos novedosos':
+        path_de_lectura = '/Users/herminiapadialromera/ironhackb/Proyecto_final/notebooks/input_sist_recom_3.json'
+        lectura = lectura_datos(path=path_de_lectura)
+        resultado = filtro_innovación_tematica(lectura, 5)
     else:
         path_de_lectura = '/Users/herminiapadialromera/ironhackb/Proyecto_final/notebooks/input_sist_recom_4.json'
+        lectura = lectura_datos(path=path_de_lectura)
+        resultado = filtro_edcrecim_tematica(lectura, 5)
 
+    
+    st.write(':red[A partir del cuestionario de cliente, internamente generamos un Data Frame con todas las posibles opciones según sus preferencias]')
     df_input_json_merge = lectura_input(path = path_de_lectura)  # Llamada a la función lectura_input
+    
+    st.dataframe(df_input_json_merge)    #imprimo el df con las opciones de cliente
     data_course_df = lectura_cursos()  # Llamada a la función lectura_cursos
     prueba_lectura = merge(df_input_json_merge, data_course_df)  # Llamada a la función merge
     lectura = lectura_datos(path = path_de_lectura)   # Llamada a la función lectura_datos
@@ -198,3 +217,14 @@ if __name__ == '__main__':
     filtro_edcrecim_tematica(df_sr4, 5) ## Llamada a filtro_edcrecim_tematica
     resultado = objetivo_analisis(lectura) ##Llamada a objetivo_analisis
     print(resultado)
+    
+    #Streamlit
+    
+    st.write('En relación al objetivo seleccionado y teniendo en cuenta el resto de criterios previamente seleccionados, le proponemos la siguiente recomendación:')
+
+    st.dataframe(resultado)    #imprimo el df resultado
+
+    st.write('Si necesitas más información, te animamos a visitar nuestra web')
+
+    link = 'https://schoolandfamily.es/'
+    st.markdown(link, unsafe_allow_html=True)
