@@ -8,7 +8,6 @@ st.image('/Users/herminiapadialromera/ironhackb/Proyecto_final/Images/logo.png',
 
 st.title(":blue[Sistema de recomendación de cursos]")
 
-
 #funciones
 def lectura_input(path): 
     pd.set_option('display.max_colwidth', None)
@@ -202,10 +201,11 @@ if __name__ == '__main__':
         resultado = filtro_edcrecim_tematica(lectura, 5)
 
     
-    st.write(':red[A partir del cuestionario de cliente, internamente generamos un Data Frame con todas las posibles opciones según sus preferencias]')
+    st.write(':red[A partir del cuestionario de cliente, internamente generamos un Data Frame con todas las posibles opciones según sus preferencias:]')
     df_input_json_merge = lectura_input(path = path_de_lectura)  # Llamada a la función lectura_input
     
     st.dataframe(df_input_json_merge)    #imprimo el df con las opciones de cliente
+    
     data_course_df = lectura_cursos()  # Llamada a la función lectura_cursos
     prueba_lectura = merge(df_input_json_merge, data_course_df)  # Llamada a la función merge
     lectura = lectura_datos(path = path_de_lectura)   # Llamada a la función lectura_datos
@@ -222,9 +222,26 @@ if __name__ == '__main__':
     
     st.write('En relación al objetivo seleccionado y teniendo en cuenta el resto de criterios previamente seleccionados, le proponemos la siguiente recomendación:')
 
-    st.dataframe(resultado)    #imprimo el df resultado
+    st.dataframe(resultado[['Título','Formato','Etapa','Temática', 'Nº Sesiones']])    #imprimo el df resultado
 
-    st.write('Si necesitas más información, te animamos a visitar nuestra web')
+st.subheader(':book: :blue[Descarga tu recomendación]')
 
-    link = 'https://schoolandfamily.es/'
-    st.markdown(link, unsafe_allow_html=True)
+@st.cache_data
+def convert_df(df):
+    return df.to_csv(index=False).encode('utf-8')
+
+recomend = pd.DataFrame(resultado)  
+
+csv = convert_df(recomend)
+
+st.download_button(
+    "Download",
+    csv,
+    "recomendacion.csv",
+    "text/csv",
+    key='download-csv'
+)
+
+st.subheader('Si necesitas más información, te animamos a visitar nuestra web')
+link = 'https://schoolandfamily.es/'
+st.markdown(link, unsafe_allow_html=True)
