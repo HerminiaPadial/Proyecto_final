@@ -1,4 +1,4 @@
-# Proyecto_final
+
 
 **<h1 align="center">Sistema de recomendación de cursos</h1>** :mortar_board:
 ===========================================================================
@@ -8,7 +8,7 @@ Este proyecto es un Sistema de Recomendación de cursos desarrollado en Python. 
 
 El sistema utiliza datos de cursos almacenados en un archivo CSV y permite filtrar las recomendaciones según diferentes criterios seleccionados por el usuario que se recibirán en formato JSON.
 
-💻 **#Tecnología utilizada**
+💻 **Tecnología utilizada**
 -----------------------------------------
 
 - [Python](https://docs.python.org/3.7/l)
@@ -18,7 +18,7 @@ El sistema utiliza datos de cursos almacenados en un archivo CSV y permite filtr
 - [Streamlit](https://docs.streamlit.io/)
 - [Visual Studio Code](https://code.visualstudio.com/)
 
-**#Cómo ejecutar el programa** :rocket:
+**Cómo ejecutar el programa** :rocket:
 -----------------------------------------
 
 Clonar o descargar el repositorio en su máquina local.
