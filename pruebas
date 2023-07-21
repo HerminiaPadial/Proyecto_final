@@ -1,0 +1,12 @@
+data_entry = {}
+def generar_json_automatico():
+    data_entry = {
+        "Provincia": ['Barcelona', 'Madrid', 'Valencia'],
+        "Formato": ['Presencial', 'Online'],
+        "Etapa": ['Infantil', 'Primaria', 'Secundaria', 'Bachillerato'],
+        "Temática": ['Arte & Cultura', 'Ciencia & Tecnología', 'Comunicación', 'Desarrollo Personal', 'Diseño', 
+                     'Educación & Crecimiento', 'Familia & Tecnología', 'Gastronomía', 'Idiomas', 'Literatura', 'Tecnología']
+    }
+    return data_entry
+prueba = generar_json_automatico ()
+print(prueba)

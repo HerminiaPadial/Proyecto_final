@@ -2,19 +2,43 @@ import streamlit as st
 import json
 import pandas as pd
 import numpy as np
-
+import streamlit as st
 
 st.image('/Users/herminiapadialromera/ironhackb/Proyecto_final/Images/logo.png', use_column_width='always')
 
+st.title(":blue[Sistema de recomendación de cursos]")
+data_entry = {}
 
-st.image ('/Users/herminiapadialromera/ironhackb/Proyecto_final/Images/STREMALIT.png')
+def generar_json_automatico():
+    provincia = st.selectbox('Seleccione su provincia', ['Barcelona', 'Madrid', 'Valencia'], key='provincia')
+    formato = st.multiselect('Seleccione el formato', ['Presencial', 'Online'], key='formato')
+    etapa = st.multiselect('Seleccione la etapa que le interesa', ['Infantil', 'Primaria', 'Secundaria', 'Bachillerato'], key='etapa')
+    tematica = st.multiselect('Seleccione la temática que le interesa', ['Arte & Cultura', 'Ciencia & Tecnología', 'Comunicación', 'Desarrollo Personal', 'Diseño', 'Educación & Crecimiento', 'Familia & Tecnología', 'Gastronomía', 'Idiomas', 'Literatura', 'Tecnología'], key='tematica')
+    objetivo = st.selectbox('¿Cuál es su objetivo?', ['Ofrecer formación variada', 'Aumentar la participación de las familias', 'Sorprender con contenidos innovadores y formatos novedosos'], key='objetivo')
 
-st.image('/Users/herminiapadialromera/ironhackb/Proyecto_final/Images/streamlit2.png')
+    data_entry = {
+        "Provincia": provincia,
+        "Formato": formato,
+        "Etapa": etapa,
+        "Temática": tematica,
+        "Objetivos": objetivo
+    }
+
+    data_entry_json = json.dumps(data_entry)
+    st.json(data_entry) # Muestra el JSON generado (opcional)
+    return data_entry_json
+
 #funciones
-def lectura_input(path): 
+def lectura_input(data_entry_json):
     pd.set_option('display.max_colwidth', None)
-    df_input_json = pd.read_json(path)
-    columnas_explode = ['Etapa', 'Formato', 'Temática', 'Objetivos'] 
+    data_entry_dict = json.loads(data_entry_json)  # Convertir la cadena JSON en un diccionario
+
+    # Asegurarse de que todas las listas tengan la misma longitud
+    max_length = max(map(len, data_entry_dict.values()))
+    for key in data_entry_dict:
+        data_entry_dict[key] = data_entry_dict[key] * (max_length // len(data_entry_dict[key]))
+
+    df_input_json = pd.DataFrame.from_dict(data_entry_dict, orient='index').transpose()
     df_input_json_merge = df_input_json.explode(['Etapa']).explode(['Formato']).explode(['Objetivos']).explode(['Temática'])
     return df_input_json_merge  #DF1
 
@@ -31,13 +55,15 @@ def merge(df_input_json_merge, data_course_df):
     df_merge = df_merge.iloc[:, 1:]
     return df_merge  #DF FINAL
 
-def lectura_datos(path):
+def lectura_datos():
    
-    df_input_json_merge = lectura_input(path)  # Llamada a la función lectura_input
+    df_input_json_merge = lectura_input(data_entry_json)  # Llamada a la función lectura_input
     data_course_df = lectura_cursos()  # Llamada a la función lectura_cursos
     prueba_lectura = merge(df_input_json_merge, data_course_df)  # Llamada a la función merge
 
     return prueba_lectura
+
+
 
 ##SR1
 
@@ -117,9 +143,7 @@ def filtro_innovación_tematica (df_merge, sesiones):
 
 ##SR4
 def check_educ_creci():
-    path = '/Users/herminiapadialromera/ironhackb/Proyecto_final/notebooks/input_sist_recom_4.json'
-    pd.set_option('display.max_colwidth', None)
-    df_input_json = pd.read_json(path)
+    df_input_json = pd.read_json(data_entry_json)
     
     if df_input_json['Temática'].str.contains('Educación & Crecimiento').any():
         pass
@@ -128,7 +152,7 @@ def check_educ_creci():
         df_input_json['Temática'][0].append('Educación & Crecimiento')
         print("Se agregó 'Educación & Crecimiento' a df_input_json['Temática']")
         columnas_explode = ['Etapa', 'Formato', 'Temática', 'Objetivos'] 
-        df_input_json_merge = df_input_json.explode(['Etapa']).explode(['Formato']).explode(['Objetivos']).explode(['Temática'])
+        df_input_json_merge = df_input_json.explode(['Etapa']).explode(['Etapa']).explode(['Formato']).explode(['Objetivos']).explode(['Temática'])
         data_course_df = lectura_cursos()  # Llamada a la función lectura_cursos
         prueba_lectura = merge(df_input_json_merge, data_course_df)  # Llamada a la función merge
         
@@ -149,9 +173,9 @@ def filtro_edcrecim_tematica (df_merge, sesiones):
 ##FUNCIÓN OBJETIVO
 def objetivo_analisis(lectura):
     #objetivos = ['Ofrecer formación variada', 'Aumentar la participación de las familias', 'Sorprender con contenidos innovadores y formatos novedosos']
-    path = '/Users/herminiapadialromera/ironhackb/Proyecto_final/notebooks/input_sist_recom_4.json'
-    pd.set_option('display.max_colwidth', None)
-    df_input_json = pd.read_json(path)
+    #path = '/Users/herminiapadialromera/ironhackb/Proyecto_final/notebooks/input_sist_recom_4.json'
+    #pd.set_option('display.max_colwidth', None)
+    df_input_json = pd.read_json(data_entry_json)
     
     print("Contenido de lectura['Objetivos']:")
     #print(lectura['Objetivos'])
@@ -180,51 +204,21 @@ def objetivo_analisis(lectura):
         #resultado_check_educ_creci = check_educ_creci()
         df_sr4 = check_educ_creci()
         return filtro_edcrecim_tematica(df_sr4, 5)
-        
+
 if __name__ == '__main__':
-
-    objetivo = st.radio('**:red[Nuestra recomendación siempre parte del objetivo seleccionado por cliente]:**', ('Ofrecer formación variada', 'Aumentar la participación de las familias', 'Sorprender con contenidos innovadores y formatos novedosos', 'Solucionar problemas de comunicacion y actitud de niños y familias'))
-
-    if objetivo == 'Ofrecer formación variada':
-        path_de_lectura = '/Users/herminiapadialromera/ironhackb/Proyecto_final/notebooks/input_.json'
-        lectura = lectura_datos(path=path_de_lectura)
-        resultado = filtro_tematica_etapa_formato(lectura, 5)
-    elif objetivo == 'Aumentar la participación de las familias':
-        path_de_lectura = '/Users/herminiapadialromera/ironhackb/Proyecto_final/notebooks/input_sist_recom_2.json'
-        lectura = lectura_datos(path=path_de_lectura)
-        resultado = filtro_valoracion_tematica(lectura, 5)
-    elif objetivo == 'Sorprender con contenidos innovadores y formatos novedosos':
-        path_de_lectura = '/Users/herminiapadialromera/ironhackb/Proyecto_final/notebooks/input_sist_recom_3.json'
-        lectura = lectura_datos(path=path_de_lectura)
-        resultado = filtro_innovación_tematica(lectura, 5)
-    else:
-        path_de_lectura = '/Users/herminiapadialromera/ironhackb/Proyecto_final/notebooks/input_sist_recom_4.json'
-        lectura = lectura_datos(path=path_de_lectura)
-        resultado = filtro_edcrecim_tematica(lectura, 5)
-
-    
-    st.write(':red[Ejemplo del DataFrame de peticiones:]')
-    df_input_json_merge = lectura_input(path = path_de_lectura)  # Llamada a la función lectura_input
-        
-    st.dataframe(df_input_json_merge)    #imprimo el df con las opciones de cliente
-        
+    data_entry_json = generar_json_automatico()  # Generar JSON automáticamente
+    df_input_json_merge = lectura_input(data_entry_json)  # Llamada a la función lectura_input
     data_course_df = lectura_cursos()  # Llamada a la función lectura_cursos
     prueba_lectura = merge(df_input_json_merge, data_course_df)  # Llamada a la función merge
-    lectura = lectura_datos(path = path_de_lectura)   # Llamada a la función lectura_datos
-    tematica_formato_etapa_df_test = filtro_tematica_etapa_formato(lectura, 5) ## Llamada a filtro_tematica_etapa_formato
-    filtro_precio_df = filtro_precio(tematica_formato_etapa_df_test) ## LLamada a filtro_precio
-    filtro_valoracion_tematica_df = filtro_valoracion_tematica(lectura, 5) ## Llamada a filtro_valoracion_tematica
-    filtro_innovación_tematica_df = filtro_innovación_tematica(lectura, 5) ## Llamada a filtro_innovación_tematica
-    df_sr4 = check_educ_creci() ## Llamada a check_educ_creci
-    filtro_edcrecim_tematica(df_sr4, 5) ## Llamada a filtro_edcrecim_tematica
-    resultado = objetivo_analisis(lectura) ##Llamada a objetivo_analisis
-    print(resultado)
+
+resultado = objetivo_analisis(prueba_lectura)  ## Llamada a objetivo_analisis
+
+print(resultado)
     
     #Streamlit
     
-    st.write('En relación al objetivo seleccionado y teniendo en cuenta el resto de criterios previamente seleccionados, le proponemos la siguiente recomendación:')
-
-    st.dataframe(resultado[['Título','Formato','Etapa','Temática', 'Nº Sesiones']])    #imprimo el df resultado
+st.write('En relación al objetivo seleccionado y teniendo en cuenta el resto de criterios previamente seleccionados, le proponemos la siguiente recomendación:')
+st.dataframe(resultado[['Título','Formato','Etapa','Temática', 'Nº Sesiones']])    #imprimo el df resultado
 
 st.subheader(':book: :blue[Descarga tu recomendación]')
 
