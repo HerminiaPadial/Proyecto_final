@@ -9,6 +9,7 @@ Este proyecto es un Sistema de Recomendación de cursos desarrollado en Python. 
 El sistema utiliza datos de cursos almacenados en un archivo CSV y permite filtrar las recomendaciones según diferentes criterios seleccionados por el usuario que se recibirán en formato JSON.
 
 💻 **#Tecnología utilizada**
+-----------------------------------------
 
 - [Python](https://docs.python.org/3.7/l)
 - [Pandas](https://pandas.pydata.org/)
@@ -18,6 +19,7 @@ El sistema utiliza datos de cursos almacenados en un archivo CSV y permite filtr
 - [Visual Studio Code](https://code.visualstudio.com/)
 
 **#Cómo ejecutar el programa** :rocket:
+-----------------------------------------
 
 Clonar o descargar el repositorio en su máquina local.
 Asegurarse de tener instaladas las bibliotecas requeridas mencionadas en los requisitos.
@@ -26,6 +28,7 @@ Ejecutar el archivo app.py con el siguiente comando:
     streamlit run main.py
 
 **#Cómo utilizar el sistema de recomendación** :mag:
+----------------------------------------------------
 
 Seleccione su provincia en el menú desplegable.
 Seleccione el formato de curso deseado (Presencial, Online o ambos) utilizando la función de selección múltiple.
@@ -34,7 +37,8 @@ Elija la temática que le interesa de la lista proporcionada.
 Seleccione el objetivo que mejor se ajuste a sus necesidades (Ofrecer formación variada, Aumentar la participación de las familias, Sorprender con contenidos innovadores y formatos novedosos).
 
 
-**#Funcionamiento del sistema** :gear:
+**Funcionamiento del sistema** :gear:
+-------------------------------------
 
 El sistema cargará los datos de cursos desde un archivo CSV ubicado en la ruta data/Datos_ampliados.csv. Luego, utilizará la información ingresada por el usuario para filtrar los cursos y generar recomendaciones personalizadas.
 
@@ -42,11 +46,12 @@ Las recomendaciones se mostrarán en una tabla con detalles como el título del 
 
 Además, el usuario tendrá la opción de descargar las recomendaciones en formato CSV haciendo clic en el botón "Descarga tu recomendación".
 
-**#Enlace a la web oficial** :globe_with_meridians:
+**Enlace a la web oficial** :globe_with_meridians:
+--------------------------------
 
 También se proporciona un enlace a la web oficial del sistema de recomendación, donde puede obtener más información sobre la empresa o los cursos ofrecidos.
 
-Para cualquier pregunta o soporte técnico, no dude en contactarnos a través del enlace proporcionado en la web. ¡Gracias por usar nuestro sistema de recomendación de cursos! :smile:
+Para cualquier pregunta o soporte técnico, no dude en contactarnos a través del enlace proporcionado en la web. 
 
 **Siguientes pasos**
 -----------------------
@@ -59,4 +64,4 @@ Para cualquier pregunta o soporte técnico, no dude en contactarnos a través de
 -------------------------------------
 [Linkedin](www.linkedin.com/in/herminiapr-data-analist-product-manager)
 
-Si tienes cualquier duda, ¡contáctame!
+Si tienes cualquier duda, ¡contáctame! :smile:
