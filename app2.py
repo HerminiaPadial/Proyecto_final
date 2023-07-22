@@ -24,21 +24,15 @@ def generar_json_automatico():
         "Objetivos": objetivo
     }
 
-    data_entry_json = json.dumps(data_entry)
+    data_entry_json = json.dumps(data_entry,skipkeys = True)
     st.json(data_entry) # Muestra el JSON generado (opcional)
     return data_entry_json
 
 #funciones
 def lectura_input(data_entry_json):
     pd.set_option('display.max_colwidth', None)
-    data_entry_dict = json.loads(data_entry_json)  # Convertir la cadena JSON en un diccionario
-
-    # Asegurarse de que todas las listas tengan la misma longitud
-    max_length = max(map(len, data_entry_dict.values()))
-    for key in data_entry_dict:
-        data_entry_dict[key] = data_entry_dict[key] * (max_length // len(data_entry_dict[key]))
-
-    df_input_json = pd.DataFrame.from_dict(data_entry_dict, orient='index').transpose()
+    df_input_json = pd.read_json(data_entry_json)
+    columnas_explode = ['Etapa', 'Formato', 'Temática', 'Objetivos'] 
     df_input_json_merge = df_input_json.explode(['Etapa']).explode(['Formato']).explode(['Objetivos']).explode(['Temática'])
     return df_input_json_merge  #DF1
 
@@ -56,7 +50,6 @@ def merge(df_input_json_merge, data_course_df):
     return df_merge  #DF FINAL
 
 def lectura_datos():
-   
     df_input_json_merge = lectura_input(data_entry_json)  # Llamada a la función lectura_input
     data_course_df = lectura_cursos()  # Llamada a la función lectura_cursos
     prueba_lectura = merge(df_input_json_merge, data_course_df)  # Llamada a la función merge
@@ -210,34 +203,36 @@ if __name__ == '__main__':
     df_input_json_merge = lectura_input(data_entry_json)  # Llamada a la función lectura_input
     data_course_df = lectura_cursos()  # Llamada a la función lectura_cursos
     prueba_lectura = merge(df_input_json_merge, data_course_df)  # Llamada a la función merge
+    lectura = lectura_datos()   # Llamada a la función lectura_datos
 
-resultado = objetivo_analisis(prueba_lectura)  ## Llamada a objetivo_analisis
 
-print(resultado)
+    resultado = objetivo_analisis(lectura)  ## Llamada a objetivo_analisis
+
+    #print(resultado)
     
     #Streamlit
     
-st.write('En relación al objetivo seleccionado y teniendo en cuenta el resto de criterios previamente seleccionados, le proponemos la siguiente recomendación:')
-st.dataframe(resultado[['Título','Formato','Etapa','Temática', 'Nº Sesiones']])    #imprimo el df resultado
+    st.write('En relación al objetivo seleccionado y teniendo en cuenta el resto de criterios previamente seleccionados, le proponemos la siguiente recomendación:')
+    st.dataframe(resultado[['Título','Formato','Etapa','Temática', 'Nº Sesiones']])    #imprimo el df resultado
 
-st.subheader(':book: :blue[Descarga tu recomendación]')
+    st.subheader(':book: :blue[Descarga tu recomendación]')
 
-@st.cache_data
-def convert_df(df):
-    return df.to_csv(index=False).encode('utf-8')
+    @st.cache_data
+    def convert_df(df):
+        return df.to_csv(index=False).encode('utf-8')
 
-recomend = pd.DataFrame(resultado)  
+    recomend = pd.DataFrame(resultado)  
 
-csv = convert_df(recomend)
+    csv = convert_df(recomend)
 
-st.download_button(
-    "Download",
-    csv,
-    "recomendacion.csv",
-    "text/csv",
-    key='download-csv'
-)
+    st.download_button(
+        "Download",
+        csv,
+        "recomendacion.csv",
+        "text/csv",
+        key='download-csv'
+    )
 
-st.subheader('Si necesitas más información, te animamos a visitar nuestra web')
-link = 'https://schoolandfamily.es/'
-st.markdown(link, unsafe_allow_html=True)
+    st.subheader('Si necesitas más información, te animamos a visitar nuestra web')
+    link = 'https://schoolandfamily.es/'
+    st.markdown(link, unsafe_allow_html=True)
